@@ -45,6 +45,5 @@ Thumbs.db
 
 # Logs e dados
 *.log
-*.csv
 *.json
 *.sqlite
