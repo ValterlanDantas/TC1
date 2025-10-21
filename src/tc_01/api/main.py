@@ -164,7 +164,7 @@ def stats_categories(user=Depends(auth_required)):
         })
     return {"categories": result, "user": user["sub"]}
 
-@app.get("/api/v1/books/top-rated")
+@app.get("/api/v1/books?sort=rating_desc,price_asc")
 def top_rated(limit: int = Query(10, ge=1, le=100), user=Depends(auth_required)):
     ranked = sorted(
         [b for b in DATA if isinstance(b["rating"], int)],
