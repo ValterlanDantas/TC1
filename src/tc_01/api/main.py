@@ -13,8 +13,7 @@ from fastapi import FastAPI
 from tc_01.routers.auth import router as auth_router
 from tc_01.routers.admin import router as admin_router
 from tc_01.core.security import auth_required
-from tc_01.routers.books import router as books_router
-from tc_01.routers.categories import router as categories_router
+
 
 
 # Onde está o CSV?
@@ -95,8 +94,7 @@ app = FastAPI(
 
 app.include_router(auth_router)
 app.include_router(admin_router)
-app.include_router(books_router)
-app.include_router(categories_router)
+
 
 DATA = load_books(CSV_FILE)
 app.state.DATA = DATA   
