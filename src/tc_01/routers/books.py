@@ -47,6 +47,7 @@ def _sort_items(items: List[Dict[str, Any]], sort_spec: List[Tuple[str, bool]]) 
     return out
 
 # --------- endpoints ---------
+
 @router.get("/books")
 def list_books(
     request: Request,
@@ -76,21 +77,6 @@ def list_books(
         "total": total,
         "items": page_items,
     }
-
-@router.get("/books/{book_id}")
-def get_book_by_id(
-    book_id: int,
-    request: Request,
-    user=Depends(auth_required),
-):
-    """
-    Retorna detalhes de um livro pelo ID.
-    """
-    data: List[Dict[str, Any]] = request.app.state.DATA
-    for b in data:
-        if b.get("id") == book_id:
-            return {"user": user["sub"], "item": b}
-    raise HTTPException(status_code=404, detail=f"Livro id={book_id} não encontrado")
 
 @router.get("/books/search")
 def search_books(
@@ -129,3 +115,53 @@ def search_books(
         "total": total,
         "items": page_items,
     }
+
+@router.get("/books/price-range")
+def price_range(
+    request: Request,
+    min: float = Query(0.0, ge=0.0),
+    max: float = Query(999999.0, gt=0.0),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=200),
+    user=Depends(auth_required),
+):
+    """
+    Filtra livros por faixa de preço com paginação.
+    Ex.: /api/v1/books/price-range?min=10&max=30&page=1&page_size=20
+    """
+    if min > max:
+        raise HTTPException(status_code=400, detail="Parâmetros inválidos: min > max.")
+
+    data: List[Dict[str, Any]] = request.app.state.DATA
+    filtered = [
+        b for b in data
+        if isinstance(b.get("price"), (int, float)) and (min <= b["price"] <= max)
+    ]
+
+    total, page_items = _paginate(filtered, page, page_size)
+    return {
+        "user": user["sub"],
+        "min": min,
+        "max": max,
+        "page": page,
+        "page_size": page_size,
+        "total": total,
+        "items": page_items,
+    }
+
+@router.get("/books/{book_id}")
+def get_book_by_id(
+    book_id: int,
+    request: Request,
+    user=Depends(auth_required),
+):
+    """
+    Retorna detalhes de um livro pelo ID.
+    """
+    data: List[Dict[str, Any]] = request.app.state.DATA
+    for b in data:
+        if b.get("id") == book_id:
+            return {"user": user["sub"], "item": b}
+    raise HTTPException(status_code=404, detail=f"Livro id={book_id} não encontrado")
+
+

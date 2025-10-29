@@ -15,6 +15,8 @@ from tc_01.routers.admin import router as admin_router
 from tc_01.core.security import auth_required
 from tc_01.routers.books import router as books_router
 from tc_01.routers.categories import router as categories_router
+from tc_01.routers.metrics import router as metrics_router
+
 
 
 # Onde está o CSV?
@@ -93,10 +95,15 @@ app = FastAPI(
     description="API pública do Tech Challenge - Endpoints opcionais implementados."
 )
 
+from tc_01.core.logs import LogRequestsMiddleware
+app.add_middleware(LogRequestsMiddleware)
+
 app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(books_router)
 app.include_router(categories_router)
+app.include_router(metrics_router)
+
 
 DATA = load_books(CSV_FILE)
 app.state.DATA = DATA   
@@ -176,35 +183,3 @@ def top_rated(limit: int = Query(10, ge=1, le=100), user=Depends(auth_required))
         key=lambda x: (-x["rating"], x["price"] if x["price"] is not None else 1e9)
     )
     return {"total": len(ranked), "items": ranked[:limit]}
-
-@app.get("/api/v1/books/price-range")
-def price_range(
-    min: float = Query(0.0, ge=0.0),
-    max: float = Query(999999.0, gt=0.0),
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=200),
-    user=Depends(auth_required)
-):
-    if min > max:
-        raise HTTPException(status_code=400, detail="Parâmetros inválidos: min > max.")
-    filtered = [
-        b for b in DATA
-        if isinstance(b["price"], (int, float)) and (min <= b["price"] <= max)
-    ]
-    start = (page - 1) * page_size
-    end = start + page_size
-    return {
-        "min": min,
-        "max": max,
-        "page": page,
-        "page_size": page_size,
-        "total": len(filtered),
-        "items": filtered[start:end],
-        "user": user["sub"]
-    }
-
-if __name__ == "__main__":
-    # permite rodar com: python -m tc_01.api.main
-    import uvicorn
-    uvicorn.run("tc_01.api.main:app", host="127.0.0.1", port=8000, reload=True)
-
