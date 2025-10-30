@@ -92,7 +92,38 @@ def load_books(path: Path) -> List[Dict[str, Any]]:
 app = FastAPI(
     title="Books API",
     version="1.0.0",
-    description="API pública do Tech Challenge - Endpoints opcionais implementados."
+    description="API pública do Tech Challenge.",
+    openapi_tags=[
+        # 1. SEGURANÇA / ADMIN
+        {
+            "name": "auth",
+            "description": "Autenticação JWT (login e refresh).",
+        },
+        {
+            "name": "admin",
+            "description": "Rotas administrativas protegidas.",
+        },
+        # 2. Health
+        {
+            "name": "health"
+        },
+        # 3. ENDPOINTS CORE
+        {
+            "name": "core",
+            "description": "Endpoints obrigatórios da API (livros, categorias, health).",
+        },
+        # 4. ENDPOINTS OPCIONAIS (INSIGHTS / MÉTRICAS)
+        {
+            "name": "insights",
+            "description": "Endpoints opcionais de métricas, estatísticas e filtros.",
+        },
+    ],
+    docs_url="/docs",
+    redoc_url=None,
+    swagger_ui_parameters={
+        "docExpansion": "list",
+        "persistAuthorization": True,
+    },
 )
 
 from tc_01.core.logs import LogRequestsMiddleware
@@ -108,11 +139,11 @@ app.include_router(metrics_router)
 DATA = load_books(CSV_FILE)
 app.state.DATA = DATA   
 
-@app.get("/api/v1/health")
+@app.get("/api/v1/health", tags=["health"])
 def health(user=Depends(auth_required)):
     return {"status": "ok", "total_books": len(DATA), "user": user["sub"]}
 
-@app.get("/api/v1/stats/overview")
+@app.get("/api/v1/stats/overview", tags=["insights"])
 def stats_overview(user=Depends(auth_required)):
     prices = [b["price"] for b in DATA if isinstance(b["price"], (int, float))]
     ratings = [b["rating"] for b in DATA if isinstance(b["rating"], int)]
@@ -131,7 +162,7 @@ def stats_overview(user=Depends(auth_required)):
         overview["rating_distribution"][str(r)] += 1
     return {**overview, "user": user["sub"]}
 
-@app.get("/api/v1/stats/categories")
+@app.get("/api/v1/stats/categories", tags=["insights"])
 def stats_categories(user=Depends(auth_required)):
     agg: Dict[str, Dict[str, Any]] = {}
     for b in DATA:
@@ -176,7 +207,7 @@ def stats_categories(user=Depends(auth_required)):
         })
     return {"categories": result, "user": user["sub"]}
 
-@app.get("/api/v1/books?sort=rating_desc,price_asc")
+@app.get("/api/v1/books?sort=rating_desc,price_asc", tags=["insights"])
 def top_rated(limit: int = Query(10, ge=1, le=100), user=Depends(auth_required)):
     ranked = sorted(
         [b for b in DATA if isinstance(b["rating"], int)],

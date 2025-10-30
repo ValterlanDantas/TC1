@@ -5,9 +5,9 @@ from collections import Counter
 
 from tc_01.core.security import auth_required
 
-router = APIRouter(prefix="/api/v1", tags=["categories"])
+router = APIRouter(prefix="/api/v1")
 
-@router.get("/categories")
+@router.get("/categories", tags = ["core"])
 def list_categories(request: Request, user=Depends(auth_required)):
     """
     Lista todas as categorias disponíveis com contagem de livros por categoria.

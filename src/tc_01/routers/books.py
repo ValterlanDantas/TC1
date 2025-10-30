@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from tc_01.core.security import auth_required
 
-router = APIRouter(prefix="/api/v1", tags=["books"])
+router = APIRouter(prefix="/api/v1", tags=["core"])
 
 # --------- helpers ---------
 def _paginate(items: List[Dict[str, Any]], page: int, page_size: int) -> Tuple[int, List[Dict[str, Any]]]:
@@ -48,7 +48,7 @@ def _sort_items(items: List[Dict[str, Any]], sort_spec: List[Tuple[str, bool]]) 
 
 # --------- endpoints ---------
 
-@router.get("/books")
+@router.get("/books", tags=["core"])
 def list_books(
     request: Request,
     page: int = Query(1, ge=1),
@@ -116,7 +116,7 @@ def search_books(
         "items": page_items,
     }
 
-@router.get("/books/price-range")
+@router.get("/books/price-range", tags=["insights"])
 def price_range(
     request: Request,
     min: float = Query(0.0, ge=0.0),
