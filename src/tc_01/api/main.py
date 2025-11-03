@@ -129,7 +129,9 @@ app = FastAPI(
 from tc_01.core.logs import LogRequestsMiddleware
 app.add_middleware(LogRequestsMiddleware)
 from tc_01.routers.scraping import router as scraping_router
+from tc_01.routers.metrics import router as metrics_router
 
+app.include_router(metrics_router)
 app.include_router(scraping_router)
 app.include_router(auth_router)
 app.include_router(admin_router)

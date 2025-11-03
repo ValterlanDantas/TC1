@@ -6,6 +6,7 @@ services:
     container_name: tc01_api
     environment:
       - PYTHONPATH=/app/src
+      - API_BASE_URL=http://tc01_api:8000
       - SECRET_KEY=dev-secret
       - ACCESS_TOKEN_EXPIRE_MIN=30
       - REFRESH_TOKEN_EXPIRE_DAYS=7
