@@ -1,0 +1,30 @@
+# Evitar mandar lixo pro build
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+*.DS_Store
+*.egg-info
+*.eggs
+*.mypy_cache
+*.pytest_cache
+*.coverage
+htmlcov/
+
+# Ambientes virtuais
+venv/
+.venv/
+.venv311/
+env/
+.env/
+
+# Configs e IDEs
+.vscode/
+.idea/
+*.iml
+
+# Dados locais
+api_logs.log
