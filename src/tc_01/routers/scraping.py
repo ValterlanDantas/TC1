@@ -1,5 +1,6 @@
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 import subprocess, sys
+from tc_01.core.security import auth_required
 
 router = APIRouter(prefix="/api/v1/scraping", tags=["insights"])
 
@@ -10,6 +11,6 @@ def _run_scraping_subprocess():
     subprocess.run(cmd, check=False)
 
 @router.post("/trigger")
-def trigger(background_tasks: BackgroundTasks):
+def trigger(background_tasks: BackgroundTasks, user=Depends(auth_required)):
     background_tasks.add_task(_run_scraping_subprocess)
     return {"message": "scraping started"}
