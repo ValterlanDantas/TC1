@@ -18,6 +18,20 @@ O projeto foi containerizado com **Docker** e implantado na nuvem via **Render**
 - **Render.com** — deploy cloud
 
 ---
+## Arquitetura 
+### Main flow as a user
+ Usuário -> Swagger -> API -> GET bookstoscrape -> response 200
+![alt text](<tc1-User flow.drawio.png>)
+
+### Main flow API as a client
+
+API as a client -> API -> Webscraping on BooksToScrap -> Armazena o .csv no filesystem do container -> http response 200
+
+![alt text](<docs/tc1-API use flow.drawio.png>)
+
+### Arquitetura Futura (Escalabilidade)
+
+![alt text](<docs/tc1-Escalabilidade diagrama.drawio.png>)
 
 ## ⚙️ Estrutura do projeto
 ```
