@@ -21,7 +21,7 @@ O projeto foi containerizado com **Docker** e implantado na nuvem via **Render**
 ## Arquitetura 
 ### Main flow as a user
  Usuário -> Swagger -> API -> GET bookstoscrape -> response 200
-![alt text](<docs/tc1-User flow.drawio.png>)
+![alt text](<docs/tc1-User flow2.drawio.png>)
 
 ### Main flow API as a client
 
