@@ -1,6 +1,9 @@
 # 📚 Books API – Tech Challenge Fase 1  
 **Machine Learning Engineering – Pós Tech | FIAP**  
 
+#### Video
+ https://youtu.be/BA2g78ga-20?si=FFqMDtYpt84MEn8z
+
 API pública e painel interativo para consulta e monitoramento de livros.  
 O projeto foi containerizado com **Docker** e implantado na nuvem via **Render**, oferecendo:  
 - **API REST (FastAPI)** com endpoints de livros, categorias e métricas;  
@@ -89,7 +92,13 @@ docker compose up --build
 
 Acesse:
 - **API** → http://localhost:8000/docs  
-- **Dashboard** → http://localhost:8501  
+- **Dashboard** → http://localhost:8501
+
+### Deploy
+* Deploy on Render
+   * https://tc1-api.onrender.com/docs
+   * https://tc1-dashboard.onrender.com/
+
 
 ### Variáveis de ambiente (já configuradas no docker-compose)
 ```yaml
